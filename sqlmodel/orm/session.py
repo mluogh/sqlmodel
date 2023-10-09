@@ -4,11 +4,11 @@ from sqlalchemy import util
 from sqlalchemy.orm import Query as _Query
 from sqlalchemy.orm import Session as _Session
 from sqlalchemy.sql.base import Executable as _Executable
-from sqlmodel.sql.expression import Select, SelectOfScalar
 from typing_extensions import Literal
 
 from ..engine.result import Result, ScalarResult
 from ..sql.base import Executable
+from ..sql.expression import Select, SelectOfScalar
 
 _TSelectParam = TypeVar("_TSelectParam")
 
@@ -60,7 +60,7 @@ class Session(_Session):
         results = super().execute(
             statement,
             params=params,
-            execution_options=execution_options,  # type: ignore
+            execution_options=execution_options,
             bind_arguments=bind_arguments,
             _parent_execute_state=_parent_execute_state,
             _add_event=_add_event,
@@ -74,7 +74,7 @@ class Session(_Session):
         self,
         statement: _Executable,
         params: Optional[Union[Mapping[str, Any], Sequence[Mapping[str, Any]]]] = None,
-        execution_options: Mapping[str, Any] = util.EMPTY_DICT,
+        execution_options: Optional[Mapping[str, Any]] = util.EMPTY_DICT,
         bind_arguments: Optional[Mapping[str, Any]] = None,
         _parent_execute_state: Optional[Any] = None,
         _add_event: Optional[Any] = None,
@@ -101,7 +101,7 @@ class Session(_Session):
         return super().execute(  # type: ignore
             statement,
             params=params,
-            execution_options=execution_options,  # type: ignore
+            execution_options=execution_options,
             bind_arguments=bind_arguments,
             _parent_execute_state=_parent_execute_state,
             _add_event=_add_event,
@@ -128,6 +128,7 @@ class Session(_Session):
         populate_existing: bool = False,
         with_for_update: Optional[Union[Literal[True], Mapping[str, Any]]] = None,
         identity_token: Optional[Any] = None,
+        execution_options: Optional[Mapping[Any, Any]] = util.EMPTY_DICT,
     ) -> Optional[_TSelectParam]:
         return super().get(
             entity,
@@ -136,4 +137,5 @@ class Session(_Session):
             populate_existing=populate_existing,
             with_for_update=with_for_update,
             identity_token=identity_token,
+            execution_options=execution_options,
         )
